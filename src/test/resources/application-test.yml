@@ -1,0 +1,10 @@
+spring:
+  temporal:
+    test-server:
+      enabled: true
+
+recon:
+  vendor:
+    min-delay-seconds: 0
+    max-delay-seconds: 0.5
+    failure-rate: 0.02

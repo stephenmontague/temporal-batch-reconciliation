@@ -1,0 +1,48 @@
+spring:
+  main:
+    banner-mode: off
+    log-startup-info: false
+  temporal:
+    connection:
+      target: ${TEMPORAL_ADDRESS:localhost:7233}
+    namespace: ${TEMPORAL_NAMESPACE:default}
+    start-workers: false
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 200
+        order_inserts: true
+        order_updates: true
+
+recon:
+  file-task-queue: reconciliation-file
+  chunk-task-queue: reconciliation-chunk
+  db: data/recon.db
+  report-dir: data/reports
+  inbox: data/inbox
+  ui-base-url: http://localhost:8233
+  start:
+    batch-size: 1000
+    max-parallel: 10
+    deadline-seconds: 7200
+    design: file
+  vendor:
+    min-delay-seconds: 1
+    max-delay-seconds: 30
+    failure-rate: 0.01
+    error-codes: ACCOUNT_LOCKED,TIMEOUT
+    poll-millis: 500
+    poll-batch: 2000
+  worker:
+    max-concurrent-activities: 20
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level [%thread] %logger{0} - %msg%n"
+  level:
+    root: WARN
+    com.example.recon: INFO

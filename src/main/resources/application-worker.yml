@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  temporal:
+    start-workers: true
+    workers-auto-discovery:
+      packages:
+        - com.example.recon

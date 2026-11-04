@@ -1,0 +1,10 @@
+spring:
+  temporal:
+    connection:
+      target: ${TEMPORAL_ADDRESS}
+      api-key: ${TEMPORAL_API_KEY}
+      enable-https: true
+    namespace: ${TEMPORAL_NAMESPACE}
+
+recon:
+  ui-base-url: https://cloud.temporal.io
