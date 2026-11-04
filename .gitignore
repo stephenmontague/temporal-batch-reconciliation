@@ -1,0 +1,9 @@
+target/
+data/
+*.iml
+.idea/
+local.env
+
+.vscode
+observability/
+scripts/

@@ -1,0 +1,7 @@
+spring:
+  temporal:
+    test-server:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update

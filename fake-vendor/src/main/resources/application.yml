@@ -1,0 +1,15 @@
+spring:
+  config:
+    import: classpath:batch-processing-shared.yml
+  temporal:
+    # Only uses the WorkflowClient, to send signals
+    start-workers: false
+
+batch-processing:
+  vendor:
+    min-delay-seconds: 1
+    max-delay-seconds: 30
+    failure-rate: 0.01
+    error-codes: ACCOUNT_LOCKED,TIMEOUT
+    poll-millis: 500
+    poll-batch: 2000

@@ -1,0 +1,14 @@
+spring:
+  config:
+    import: classpath:batch-processing-shared.yml
+  temporal:
+    # A client only: starts workflows and reads histories
+    start-workers: false
+
+batch-processing:
+  start:
+    batch-size: 1000
+    max-parallel: 10
+    deadline-seconds: 7200
+    # Vendor error codes worth sending again; rows failed with any other code stay FAILED
+    retry-codes: TIMEOUT

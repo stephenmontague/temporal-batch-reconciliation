@@ -1,0 +1,38 @@
+spring:
+  config:
+    import: classpath:batch-processing-shared.yml
+  jpa:
+    hibernate:
+      # The workers create the schema, so start a worker before the vendor on a fresh database
+      ddl-auto: update
+  temporal:
+    start-workers: true
+    # One worker, one task queue
+    workers:
+      - name: basic-workflow
+        task-queue: ${batch-processing.basic-workflow-task-queue}
+        workflow-classes:
+          - com.example.batchprocessing.basicworkflow.workflow.impl.BasicWorkflowImpl
+        activity-beans:
+          - reconciliationActivities
+        capacity:
+          max-concurrent-activity-executors: ${batch-processing.worker.max-concurrent-activities}
+
+# SDK metrics at http://localhost:8091/actuator/prometheus, scraped by observability/ (see METRICS.md).
+# Override with SERVER_PORT. Bound to localhost only; Docker Desktop's host.docker.internal still reaches it.
+server:
+  port: 8091
+  address: 127.0.0.1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    tags:
+      application: basic-workflow-worker
+    # Histogram buckets for the SDK's timers (temporal_*), so Grafana can show p95 schedule-to-start and execution latency
+    distribution:
+      percentiles-histogram:
+        temporal: true

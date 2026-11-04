@@ -1,0 +1,62 @@
+# Settings every application shares. Each app's application.yml pulls this in with
+#   spring.config.import: classpath:batch-processing-shared.yml
+# An imported file wins over the file that imports it, so only put settings here that no app overrides.
+
+spring:
+  config:
+    # Your own settings (Temporal Cloud address and keys): local.env in the directory you run from, normally the repo root.
+    # Gitignored; copy local.env.example to start. It wins over this file; real environment variables win over it.
+    import: optional:file:./local.env[.properties]
+  profiles:
+    # Spring only reads SPRING_PROFILES_ACTIVE from real environment variables, so this lets local.env set it too
+    active: ${SPRING_PROFILES_ACTIVE:}
+  main:
+    banner-mode: off
+    log-startup-info: false
+  temporal:
+    connection:
+      target: ${TEMPORAL_ADDRESS:localhost:7233}
+    namespace: ${TEMPORAL_NAMESPACE:default}
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 200
+        order_inserts: true
+        order_updates: true
+
+batch-processing:
+  basic-workflow-task-queue: batch-processing-basic-workflow
+  # Named explicitly so local.env can set it: Spring only maps BATCH_PROCESSING_DB to batch-processing.db for real
+  # environment variables, not for KEY=value lines in an imported file
+  db: ${BATCH_PROCESSING_DB:data/batch-processing.db}
+  report-dir: data/reports
+  inbox: data/inbox
+  ui-base-url: http://localhost:8233
+  worker:
+    # The worker reads this into spring.temporal.workers[].capacity
+    max-concurrent-activities: 20
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level [%thread] %logger{0} - %msg%n"
+  level:
+    root: WARN
+    com.example.batchprocessing: INFO
+
+---
+# Temporal Cloud: turn on with SPRING_PROFILES_ACTIVE=cloud
+spring:
+  config:
+    activate:
+      on-profile: cloud
+  temporal:
+    connection:
+      target: ${TEMPORAL_ADDRESS}
+      api-key: ${TEMPORAL_API_KEY}
+      enable-https: true
+    namespace: ${TEMPORAL_NAMESPACE}
+
+batch-processing:
+  ui-base-url: https://cloud.temporal.io
